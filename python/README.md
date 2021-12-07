@@ -1,13 +1,12 @@
 ---
 page_type: sample
-description: "A set of Python samples that show how a device that uses the IoT Plug and Play conventions interacts with either IoT Hub or IoT Central."
+description: "A set of Python samples of CITL: C languate Intelligent Function Units that interacts with either IoT Hub or IoT Central."
 languages:
 - python
 products:
 - azure-iot-hub
 - azure-iot-central
 - azure-iot-pnp
-urlFragment: azure-iot-pnp-device-samples-for-python
 ---
 
 # IoT Plug And Play device samples
