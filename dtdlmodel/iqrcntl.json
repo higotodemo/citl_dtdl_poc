@@ -1,0 +1,77 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:com:example:iqrcntl;1",
+  "@type": "Interface",
+  "displayName": "iqrcntl",
+  "contents": [
+    {
+      "@type": "Component",
+      "name": "deviceInformation",
+      "displayName": "Component of DeviceInformation",
+      "description": "Get Device Information of RD55UP12V",
+      "schema":  "dtmi:azure:DeviceManagement:DeviceInformation;1"
+    },
+    {
+      "@type": "Component",
+      "name": "rd55up12v",
+      "displayName": "Component of RD55UP12V",
+      "schema":  "dtmi:com:example:rd55up12v;1"
+    },
+    {
+      "@type": "Command",
+      "name": "Hello",
+      "commandType": "synchronous",
+      "displayName": "ping Hello",
+      "response": {
+        "name": "response",
+        "schema": "string",
+        "comment": "You shall receive message of Hello",
+        "description": "used for diagnostic for cloud connectivity"
+      }
+    },
+    {
+      "@type": "Property",
+      "name": "iqrcntlstatus",
+      "schema": "dtmi:com:example:iqrcntl:device:status;1",
+      "displayName": {
+        "en": "Device Status",
+        "ja": "デバイス状態"
+      },
+      "writable": false,
+      "description": {
+        "en": "Property Device Status for debugging purpose",
+        "ja": "デバッグ用　デバイススタータスをプロパティデータとして保持する"
+      },
+      "comment": "Enum Value -- 0:Good , 1:Bad"
+    },
+    {
+      "@type": ["Telemetry","Temperature"],
+      "name": "temperature",
+      "unit": "degreeCelsius",
+      "schema": "double",
+      "description": {
+        "en": "Sending is dummy telemetry for debugging purpose",
+        "ja": "デバッグ用ダミーの温度情報をテレメトリとしてクラウドに毎秒送信する"        
+      }
+    }
+  ],
+  "schemas": {
+    "@id": "dtmi:com:example:iqrcntl:device:status;1",
+    "@type": "Enum",
+    "valueSchema": "integer",
+    "enumValues": [
+      {
+        "name": "Good",
+        "displayName": "Good",
+        "enumValue" : 0
+      },
+      {
+        "name": "Bad",
+        "displayName": "Bad",
+        "enumValue": 1
+      }
+    ]
+  }
+}
+
+
