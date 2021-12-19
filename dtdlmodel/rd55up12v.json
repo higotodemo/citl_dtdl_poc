@@ -51,7 +51,7 @@
     },
     {
       "@type": "Command",
-      "name": "CITL_FromBuff_Single",
+      "name": "CITL_FromBuf_Single",
       "commandType": "synchronous",
       "displayName": "Read Single Buf@16284",
       "description": "Read Single shot data from Buf at address:16284",
