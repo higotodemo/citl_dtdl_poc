@@ -78,16 +78,18 @@ class Rd55up12v(object):
         self.value = -1
         self.readdata = -1
 
-    def citl_tobuf_single_handler(self, value):
+    async def citl_tobuf_single_handler(self, value):
         self.value = value
         ulTargetAddr = 16284
+        #usDataBuf_W = [0xFFFF]
         if(self.value == -1):
             print("write valule must be greater than zero")
             self.return_status = self.error_status
 
+        usDataBuf_W = [value]
         print("Write to Buf_Addr=16284 , Data= {_val}".format(_val=value))
         #to do call CITL_ToBuf function
-        sRet = CITL_To_Buf(ulTargetAddr, self.data_size, self.value)
+        sRet = CITL_ToBuf(ulTargetAddr, self.data_size, usDataBuf_W, 0)
         if(sRet != 0):
             print("CITL_ToBuf Failed({})".format(sRet))
             self.return_status = self.error_status
@@ -108,7 +110,7 @@ class Rd55up12v(object):
         return response_dict
 
 
-    def citl_frombuf_single_handler(self, addr):
+    async def citl_frombuf_single_handler(self, addr):
         _readData =[]
         if(addr != 16284):
             print("read address was not set expeted value, expected value is 16284")
@@ -157,14 +159,23 @@ async def hello_handler(values):
 #####################################################
 # CREATE RESPONSES TO COMMANDS
 
-def hello_response():
-        response_dict = {}
-        response_dict["response"] = "Hello"
-        response_dict["Timestamp"] = (
+def hello_response(values):
+    if values:
+        response_dict= {
+            "response": values,
+            "Timestamp":(
+                (datetime.now() ).astimezone().isoformat()
+            )
+        }
+    else:
+        response_dict = {
+            "response" : "Hello",
+            "Timestamp" : (
             (datetime.now() ).astimezone().isoformat()
-        )
-        print(response_dict)
-        return response_dict
+            )
+        }
+    print(response_dict)
+    return response_dict
 
 # END CREATE RESPONSES TO COMMANDS
 #####################################################
@@ -180,6 +191,12 @@ async def send_telemetry_from_temp_controller(device_client, telemetry_msg, comp
     print(msg)
     await asyncio.sleep(5)
 
+async def send_telemetry_from_citl_buf(device_client, citl_msg, component_name=None):
+    msg = pnp_helper.create_telemetry( citl_msg, component_name)
+    await device_client.send_message(msg)
+    print("Send CITL msg")
+    print(msg)
+    await asyncio.sleep(5)
 
 #####################################################
 # COMMAND TASKS
@@ -299,7 +316,8 @@ async def main():
         registration_id = os.getenv("IOTHUB_DEVICE_DPS_DEVICE_ID")
         x509 = X509(
             cert_file=os.getenv("IOTHUB_DEVICE_X509_CERT"),
-            key_file=os.getenv("IOTHUB_DEVICE_X509_KEY")
+            key_file=os.getenv("IOTHUB_DEVICE_X509_KEY"),
+            pass_phrase=os.getenv("PASS_PHRASE")
         )
 
         registration_result = await provision_device(
@@ -397,6 +415,10 @@ async def main():
     # Function to send telemetry every 8 seconds
 
     async def send_telemetry():
+        
+        ulTargetAddr = 16384
+        readDataBuf_W =[0]
+
         print("Sending simulated temprature telemetry -- range 10 to 50")
 
         while True:
@@ -406,6 +428,23 @@ async def main():
                 device_client, temperature_msg1, None
             )
 
+            sRet= CITL_FromBuf(ulTargetAddr, 1, readDataBuf_W, 1)
+            if(sRet != 0):
+                print("CITL_FromBuf Faild({})".format(sRet))
+            
+            if(readDataBuf_W[0] < 500):
+                readDataBuf_W[0]+=1
+                print("Val = {}".format(readDataBuf_W))
+                sRet = CITL_ToBuf(ulTargetAddr, 1, readDataBuf_W, 0)
+                if(sRet != 0):
+                    print("CITL_ToBuf Failed({})".format(sRet))
+            else:
+                print("Reset Val = 1")
+                readDataBuf_W[0] = 1
+                sRet = CITL_ToBuf(ulTargetAddr, 1, readDataBuf_W, 0)
+
+            citl_msg1 = { "CTIL_16384": readDataBuf_W[0]}
+            await send_telemetry_from_citl_buf(device_client, citl_msg1, rd55up12v_component_name)
 
     send_telemetry_task = asyncio.ensure_future(send_telemetry())
 
