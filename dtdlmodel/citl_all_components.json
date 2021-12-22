@@ -1,231 +1,234 @@
 [
     {
-  "@context": "dtmi:dtdl:context;2",
-  "@id": "dtmi:com:example:rd55up12v;1",
-  "@type": "Interface",
-  "displayName": "melcoiQ-R RD55UP12-V",
-  "description": "MELCO iQ-R C言語インテリジェントファンクションユニット",
-  "contents": [
-    {
-      "@type": "Telemetry",
-      "name": "CTIL_16384",
-      "schema": "integer",
-      "displayName": "Read Buf at 16384",
-      "description": {
-        "en": "Continous Read buf@16385 every second then stop if buf is greater then 500",
-        "ja": "毎秒アドレス16385のデータをリードし、読みだしたデータが500以上の場合は停止する"
-      }
+        "@context": "dtmi:dtdl:context;2",
+        "@id": "dtmi:com:example:iqrcntl;1",
+        "@type": "Interface",
+        "displayName": "iqrcntl",
+        "contents": [
+            {
+                "@type": "Component",
+                "name": "deviceInformation",
+                "displayName": "Component of DeviceInformation",
+                "description": "Get Device Information of RD55UP12V",
+                "schema": "dtmi:azure:DeviceManagement:DeviceInformation;1"
+            },
+            {
+                "@type": "Component",
+                "name": "rd55up12v",
+                "displayName": "Component of RD55UP12V",
+                "schema": "dtmi:com:example:rd55up12v;1"
+            },
+            {
+                "@type": "Command",
+                "name": "Hello",
+                "commandType": "synchronous",
+                "displayName": "ping Hello",
+                "response": {
+                    "name": "response",
+                    "schema": "string",
+                    "comment": "You shall receive message of Hello",
+                    "description": "used for diagnostic for cloud connectivity"
+                }
+            },
+            {
+                "@type": "Property",
+                "name": "iqrcntlstatus",
+                "schema": "dtmi:com:example:iqrcntl:device:status;1",
+                "displayName": {
+                    "en": "Device Status",
+                    "ja": "デバイス状態"
+                },
+                "writable": false,
+                "description": {
+                    "en": "Property Device Status for debugging purpose",
+                    "ja": "デバッグ用デバイススタータスをプロパティデータとして保持する"
+                },
+                "comment": "Enum Value -- 0:Good , 1:Bad"
+            },
+            {
+                "@type": [
+                    "Telemetry",
+                    "Temperature"
+                ],
+                "name": "temperature",
+                "unit": "degreeCelsius",
+                "schema": "double",
+                "description": {
+                    "en": "Sending is dummy telemetry for debugging purpose",
+                    "ja": "デバッグ用ダミーの温度情報をテレメトリとしてクラウドに毎秒送信する"
+                }
+            }
+        ],
+        "schemas": {
+            "@id": "dtmi:com:example:iqrcntl:device:status;1",
+            "@type": "Enum",
+            "valueSchema": "integer",
+            "enumValues": [
+                {
+                    "name": "Good",
+                    "displayName": "Good",
+                    "enumValue": 0
+                },
+                {
+                    "name": "Bad",
+                    "displayName": "Bad",
+                    "enumValue": 1
+                }
+            ]
+        }
     },
     {
-      "@type": "Property",
-      "name": "hoge_property",
-      "schema": "integer",
-      "displayName": "Integer propoerty of rd55up12v",
-      "comment": "This is used for sample data",
-      "description": "refer to python code-- iqr_controller_with_r55up12v.py",
-      "writable": true
+        "@context": "dtmi:dtdl:context;2",
+        "@id": "dtmi:com:example:rd55up12v;1",
+        "@type": "Interface",
+        "displayName": "melcoiQ-R RD55UP12-V",
+        "description": "MELCO iQ-R C言語インテリジェントファンクションユニット",
+        "contents": [
+            {
+                "@type": "Telemetry",
+                "name": "CTIL_16384",
+                "schema": "integer",
+                "displayName": "Read Buf at 16384",
+                "description": {
+                    "en": "Continous Read buf@16385 every second then stop if buf is greater then 500",
+                    "ja": "毎秒アドレス16385のデータをリードし、読みだしたデータが500以上の場合は停止する"
+                }
+            },
+            {
+                "@type": "Property",
+                "name": "hoge_property",
+                "schema": "integer",
+                "displayName": "Integer propoerty of rd55up12v",
+                "comment": "This is used for sample data",
+                "description": "refer to python code-- iqr_controller_with_r55up12v.py",
+                "writable": true
+            },
+            {
+                "@type": "Command",
+                "name": "CITL_ToBuf_Single",
+                "commandType": "asynchronous",
+                "displayName": {
+                    "en": "Write a single data to Buffer to device via CITL_ToBuf command",
+                    "ja": "C言語インテリジェント機能ユニットのバッファメモリへデータを書き込む"
+                },
+                "description": {
+                    "en": "ToDo:  You have to implement CITL_ToBuf_Multiple",
+                    "ja": "データアレイをBUFに書き込めるようにCITL_ToBuf_Multipleを定義すること"
+                },
+                "request": {
+                    "name": "value",
+                    "displayName": "Write Value to Buf@16284",
+                    "schema": "integer",
+                    "description": "Write Address of Buf is fixed 16284"
+                },
+                "response": {
+                    "name": "ret",
+                    "displayName": "Return Status",
+                    "schema": "integer",
+                    "description": "Sattus -- 200: Good , 400: Error"
+                }
+            },
+            {
+                "@type": "Command",
+                "name": "CITL_FromBuf_Single",
+                "commandType": "synchronous",
+                "displayName": "Read Single Buf@16284",
+                "description": "Read Single shot data from Buf at address:16284",
+                "request": {
+                    "name": "addr",
+                    "displayName": "Read value from buf_addr=16284",
+                    "schema": "integer",
+                    "description": "Read Address of Buf is fixed 16284"
+                },
+                "response": {
+                    "name": "response",
+                    "schema": {
+                        "@type": "Object",
+                        "fields": [
+                            {
+                                "name": "value",
+                                "displayName": "Read Value from Buf",
+                                "comment": "Data type Integer",
+                                "description": "Value read from Buf @ 16284",
+                                "schema": "integer"
+                            },
+                            {
+                                "name": "ret",
+                                "displayName": "Return Value",
+                                "description": "Set 200 if value is valid, Set 400 if value is invalid",
+                                "comment": "When ret is 400, you have to handle value as NULL",
+                                "schema": "integer"
+                            }
+                        ]
+                    },
+                    "displayName": "Value read from Buf@16284",
+                    "description": " No need "
+                }
+            }
+        ]
     },
     {
-      "@type": "Command",
-      "name": "CITL_ToBuf_Single",
-      "commandType": "asynchronous",
-      "displayName": {
-        "en": "Write a single data to Buffer to device via CITL_ToBuf command",
-        "ja": "C言語インテリジェント機能ユニットのバッファメモリへデータを書き込む"
-      },
-      "description": {
-        "en": "ToDo:  You have to implement CITL_ToBuf_Multiple",
-        "ja": "データアレイをBUFに書き込めるようにCITL_ToBuf_Multipleを定義すること"
-      },
-      "request": {
-        "name": "value",
-        "displayName": "Write Value to Buf@16284",
-        "schema": "integer",
-        "description": "Write Address of Buf is fixed 16284"
-      },
-      "response": {
-        "name": "ret",
-        "displayName": "Return Status",
-        "schema": "integer",
-        "description": "Sattus -- 200: Good , 400: Error"
-      }
-    },
-    {
-      "@type": "Command",
-      "name": "CITL_FromBuf_Single",
-      "commandType": "synchronous",
-      "displayName": "Read Single Buf@16284",
-      "description": "Read Single shot data from Buf at address:16284",
-      "request": {
-        "name": "addr",
-        "displayName": "Read value from buf_addr=16284",
-        "schema": "integer",
-        "description": "Read Address of Buf is fixed 16284"
-      },
-      "response": {
-        "name" : "response",
-        "schema": {
-           "@type": "Object" ,
-           "fields": [
-             {
-               "name": "value",
-               "displayName": "Read Value from Buf",
-               "comment": "Data type Integer",
-               "description": "Value read from Buf @ 16284",
-               "schema": "integer"
-             },
-             {
-               "name": "ret",
-               "displayName": "Return Value",
-               "description": "Set 200 if value is valid, Set 400 if value is invalid",
-               "comment" : "When ret is 400, you have to handle value as NULL",
-               "schema": "integer"
-             }
-           ]
-        },
-        "displayName": "Value read from Buf@16284",
-        "description": " No need "
-      }
+        "@context": "dtmi:dtdl:context;2",
+        "@id": "dtmi:azure:DeviceManagement:DeviceInformation;1",
+        "@type": "Interface",
+        "displayName": "Device Information",
+        "contents": [
+            {
+                "@type": "Property",
+                "name": "manufacturer",
+                "displayName": "Manufacturer",
+                "schema": "string",
+                "description": "Company name of the device manufacturer. This could be the same as the name of the original equipment manufacturer (OEM). Ex. Contoso."
+            },
+            {
+                "@type": "Property",
+                "name": "model",
+                "displayName": "Device model",
+                "schema": "string",
+                "description": "Device model name or ID. Ex. Surface Book 2."
+            },
+            {
+                "@type": "Property",
+                "name": "swVersion",
+                "displayName": "Software version",
+                "schema": "string",
+                "description": "Version of the software on your device. This could be the version of your firmware. Ex. 1.3.45"
+            },
+            {
+                "@type": "Property",
+                "name": "osName",
+                "displayName": "Operating system name",
+                "schema": "string",
+                "description": "Name of the operating system on the device. Ex. Windows 10 IoT Core."
+            },
+            {
+                "@type": "Property",
+                "name": "processorArchitecture",
+                "displayName": "Processor architecture",
+                "schema": "string",
+                "description": "Architecture of the processor on the device. Ex. x64 or ARM."
+            },
+            {
+                "@type": "Property",
+                "name": "processorManufacturer",
+                "displayName": "Processor manufacturer",
+                "schema": "string",
+                "description": "Name of the manufacturer of the processor on the device. Ex. Intel."
+            },
+            {
+                "@type": "Property",
+                "name": "totalStorage",
+                "displayName": "Total storage",
+                "schema": "double",
+                "description": "Total available storage on the device in kilobytes. Ex. 2048000 kilobytes."
+            },
+            {
+                "@type": "Property",
+                "name": "totalMemory",
+                "displayName": "Total memory",
+                "schema": "double",
+                "description": "Total available memory on the device in kilobytes. Ex. 256000 kilobytes."
+            }
+        ]
     }
-  ]
-},
-{
-    "@context": "dtmi:dtdl:context;2",
-    "@id": "dtmi:com:example:iqrcntl;1",
-    "@type": "Interface",
-    "displayName": "iqrcntl",
-    "contents": [
-      {
-        "@type": "Component",
-        "name": "deviceInformation",
-        "displayName": "Component of DeviceInformation",
-        "description": "Get Device Information of RD55UP12V",
-        "schema":  "dtmi:azure:DeviceManagement:DeviceInformation;1"
-      },
-      {
-        "@type": "Component",
-        "name": "rd55up12v",
-        "displayName": "Component of RD55UP12V",
-        "schema":  "dtmi:com:example:rd55up12v;1"
-      },
-      {
-        "@type": "Command",
-        "name": "Hello",
-        "commandType": "synchronous",
-        "displayName": "ping Hello",
-        "response": {
-          "name": "response",
-          "schema": "string",
-          "comment": "You shall receive message of Hello",
-          "description": "used for diagnostic for cloud connectivity"
-        }
-      },
-      {
-        "@type": "Property",
-        "name": "iqrcntlstatus",
-        "schema": "dtmi:com:example:iqrcntl:device:status;1",
-        "displayName": {
-          "en": "Device Status",
-          "ja": "デバイス状態"
-        },
-        "writable": false,
-        "description": {
-          "en": "Property Device Status for debugging purpose",
-          "ja": "デバッグ用　デバイススタータスをプロパティデータとして保持する"
-        },
-        "comment": "Enum Value -- 0:Good , 1:Bad"
-      },
-      {
-        "@type": ["Telemetry","Temperature"],
-        "name": "temperature",
-        "unit": "degreeCelsius",
-        "schema": "double",
-        "description": {
-          "en": "Sending is dummy telemetry for debugging purpose",
-          "ja": "デバッグ用ダミーの温度情報をテレメトリとしてクラウドに毎秒送信する"        
-        }
-      }
-    ],
-    "schemas": {
-      "@id": "dtmi:com:example:iqrcntl:device:status;1",
-      "@type": "Enum",
-      "valueSchema": "integer",
-      "enumValues": [
-        {
-          "name": "Good",
-          "displayName": "Good",
-          "enumValue" : 0
-        },
-        {
-          "name": "Bad",
-          "displayName": "Bad",
-          "enumValue": 1
-        }
-      ]
-    }
-  },
-  {
-    "@context": "dtmi:dtdl:context;2",
-    "@id": "dtmi:azure:DeviceManagement:DeviceInformation;1",
-    "@type": "Interface",
-    "displayName": "Device Information",
-    "contents": [
-      {
-        "@type": "Property",
-        "name": "manufacturer",
-        "displayName": "Manufacturer",
-        "schema": "string",
-        "description": "Company name of the device manufacturer. This could be the same as the name of the original equipment manufacturer (OEM). Ex. Contoso."
-      },
-      {
-        "@type": "Property",
-        "name": "model",
-        "displayName": "Device model",
-        "schema": "string",
-        "description": "Device model name or ID. Ex. Surface Book 2."
-      },
-      {
-        "@type": "Property",
-        "name": "swVersion",
-        "displayName": "Software version",
-        "schema": "string",
-        "description": "Version of the software on your device. This could be the version of your firmware. Ex. 1.3.45"
-      },
-      {
-        "@type": "Property",
-        "name": "osName",
-        "displayName": "Operating system name",
-        "schema": "string",
-        "description": "Name of the operating system on the device. Ex. Windows 10 IoT Core."
-      },
-      {
-        "@type": "Property",
-        "name": "processorArchitecture",
-        "displayName": "Processor architecture",
-        "schema": "string",
-        "description": "Architecture of the processor on the device. Ex. x64 or ARM."
-      },
-      {
-        "@type": "Property",
-        "name": "processorManufacturer",
-        "displayName": "Processor manufacturer",
-        "schema": "string",
-        "description": "Name of the manufacturer of the processor on the device. Ex. Intel."
-      },
-      {
-        "@type": "Property",
-        "name": "totalStorage",
-        "displayName": "Total storage",
-        "schema": "double",
-        "description": "Total available storage on the device in kilobytes. Ex. 2048000 kilobytes."
-      },
-      {
-        "@type": "Property",
-        "name": "totalMemory",
-        "displayName": "Total memory",
-        "schema": "double",
-        "description": "Total available memory on the device in kilobytes. Ex. 256000 kilobytes."
-      }
-    ]
-  } 
 ]
