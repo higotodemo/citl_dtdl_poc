@@ -9,3 +9,8 @@ The C intelligent function module realizes data processing and numerical analysi
 ![MELCO Module Configuration Diagram](images/MELCO_ModuleCOnfiguration.png)
 
 
+--Example of Ladder Logic --
+
+![Ladder_Logic_Fom](images/LadderLogic.png)
+
+
